@@ -1,46 +1,198 @@
 <!doctype html>
 <html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101116">
-  <meta name="description" content="DROPZONE — открывай кейсы Counter-Strike, собирай скины и задавай любой игровой баланс. Без регистрации.">
-  <title>DROPZONE — кейсы Counter-Strike</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff7538'/%3E%3Cpath d='M9 8h8l7 8-7 8H9l7-8z' fill='%23101116'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="/src/style.css">
-  <script type="module" src="/src/main.js"></script>
-</head>
-<body>
-  <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
-    <symbol id="i-case" viewBox="0 0 24 24"><path d="M8 7V5h8v2M3 8h18v12H3zM3 12h18M9 11h6v3H9z"/></symbol>
-    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
-    <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M20 8V5H4v14h16v-5M4 8h17v6h-6V8"/><path d="M17 11h1"/></symbol>
-    <symbol id="i-sound" viewBox="0 0 24 24"><path d="M11 4 6 8H3v8h3l5 4zM15 8a6 6 0 0 1 0 8M18 5a10 10 0 0 1 0 14"/></symbol>
-    <symbol id="i-muted" viewBox="0 0 24 24"><path d="M11 4 6 8H3v8h3l5 4zM16 9l6 6M22 9l-6 6"/></symbol>
-    <symbol id="i-x" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
-    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
-    <symbol id="i-flash" viewBox="0 0 24 24"><path d="m14 2-9 12h7l-2 8 9-12h-7z"/></symbol>
-    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
-    <symbol id="i-back" viewBox="0 0 24 24"><path d="m14 5-7 7 7 7"/></symbol>
-    <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 11a9 9 0 1 1 3 8M3 4v7h7M12 7v6l4 2"/></symbol>
-  </defs></svg>
-  <header class="header">
-    <a class="brand" href="#cases" aria-label="DROPZONE, кейсы"><span class="brand-mark">D<span>›</span></span><span>DROP<span class="brand-accent">ZONE</span><small>COUNTER-STRIKE CASES</small></span></a>
-    <nav class="main-nav" aria-label="Основная навигация"><button class="nav-button active" data-view="cases"><svg><use href="#i-case"/></svg>Кейсы</button><button class="nav-button" data-view="inventory"><svg><use href="#i-grid"/></svg>Инвентарь <span id="inventory-count">0</span></button></nav>
-    <div class="header-actions"><button id="sound-toggle" class="icon-button" aria-label="Отключить звук" aria-pressed="true"><svg><use href="#i-sound"/></svg></button><button id="balance-button" class="balance-button"><svg><use href="#i-wallet"/></svg><span><small>МОЙ БАЛАНС</small><strong id="balance"><em>$</em> 10,000.00</strong></span><b>+</b></button></div>
-  </header>
-  <main class="main">
-    <section id="cases-view">
-      <div class="intro"><div><div class="eyebrow"><span class="orange-line"></span> ТВОЙ СЛЕДУЮЩИЙ ДРОП</div><h1>Открывай. <span>Забирай.</span> Повторяй.</h1><p>Любимые скины. Десять кейсов. Никаких ограничений.</p></div><div class="intro-note"><svg><use href="#i-flash"/></svg><div><strong>Твой баланс — твои правила</strong><span>Пополняй бесплатно и пробуй снова</span></div><button class="text-button" data-topup>Пополнить</button></div></div>
-      <div class="section-title"><h2><svg><use href="#i-case"/></svg>Коллекция кейсов <span>10</span></h2><span class="section-note">Какой откроем первым?</span></div>
-      <div id="case-grid" class="case-grid"></div>
-      <section class="recent-section"><div class="section-title"><h2><svg><use href="#i-history"/></svg>Твои последние дропы</h2><button class="text-button" data-view="inventory">В инвентарь</button></div><div id="recent-drops" class="recent-drops"></div></section>
-    </section>
-    <section id="inventory-view" hidden><div class="section-title inventory-heading"><div><div class="eyebrow">ТВОЯ КОЛЛЕКЦИЯ</div><h1>Инвентарь <span id="inventory-title-count">0</span></h1></div><button id="sell-all" class="secondary-button">Продать всё</button></div><div id="inventory-grid" class="inventory-grid"></div><button id="load-more" class="secondary-button" hidden>Показать ещё</button></section>
-  </main>
-  <footer class="footer"><span class="footer-brand">DROP<span>ZONE</span></span><p>Баланс и предметы виртуальные. Без платежей и вывода денег.</p><span>Не связан с Valve.</span></footer>
-  <dialog id="wallet-dialog" class="wallet-dialog" aria-label="Изменить баланс"><form id="wallet-form" novalidate><button type="button" class="icon-button dialog-close" data-close="wallet-dialog" aria-label="Закрыть"><svg><use href="#i-x"/></svg></button><div class="eyebrow">БЕЗ ЛИМИТОВ НА ПОПОЛНЕНИЯ</div><h2>Задай свой баланс</h2><p>Это виртуальные доллары. Просто выбери сумму.</p><label for="wallet-amount">Новый баланс, USD</label><input id="wallet-amount" name="amount" inputmode="decimal" autocomplete="off" maxlength="18" required><div class="preset-row"><button type="button" data-amount="1000">1 000</button><button type="button" data-amount="10000">10 000</button><button type="button" data-amount="100000">100 000</button><button type="button" data-amount="1000000">1 млн</button></div><p id="wallet-error" class="form-error" role="alert"></p><button class="primary-button" type="submit">Установить баланс</button></form></dialog>
-  <dialog id="case-dialog" class="case-dialog" aria-label="Открытие кейса"><div id="case-content"></div></dialog>
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#101116" />
+    <meta
+      name="description"
+      content="DROPZONE — открывай кейсы Counter-Strike, собирай скины и задавай любой игровой баланс. Без регистрации."
+    />
+    <title>DROPZONE — кейсы Counter-Strike</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff7538'/%3E%3Cpath d='M9 8h8l7 8-7 8H9l7-8z' fill='%23101116'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="/src/style.css" />
+    <script type="module" src="/src/main.js"></script>
+  </head>
+  <body>
+    <svg
+      class="icon-library"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <defs>
+        <symbol id="i-case" viewBox="0 0 24 24">
+          <path d="M8 7V5h8v2M3 8h18v12H3zM3 12h18M9 11h6v3H9z" />
+        </symbol>
+        <symbol id="i-grid" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="7" height="7" rx="1" />
+          <rect x="14" y="3" width="7" height="7" rx="1" />
+          <rect x="3" y="14" width="7" height="7" rx="1" />
+          <rect x="14" y="14" width="7" height="7" rx="1" />
+        </symbol>
+        <symbol id="i-wallet" viewBox="0 0 24 24">
+          <path d="M20 8V5H4v14h16v-5M4 8h17v6h-6V8" />
+          <path d="M17 11h1" />
+        </symbol>
+        <symbol id="i-sound" viewBox="0 0 24 24">
+          <path
+            d="M11 4 6 8H3v8h3l5 4zM15 8a6 6 0 0 1 0 8M18 5a10 10 0 0 1 0 14"
+          />
+        </symbol>
+        <symbol id="i-muted" viewBox="0 0 24 24">
+          <path d="M11 4 6 8H3v8h3l5 4zM16 9l6 6M22 9l-6 6" />
+        </symbol>
+        <symbol id="i-x" viewBox="0 0 24 24">
+          <path d="m6 6 12 12M18 6 6 18" />
+        </symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24">
+          <path d="M12 5v14M5 12h14" />
+        </symbol>
+        <symbol id="i-flash" viewBox="0 0 24 24">
+          <path d="m14 2-9 12h7l-2 8 9-12h-7z" />
+        </symbol>
+        <symbol id="i-check" viewBox="0 0 24 24">
+          <path d="m5 12 4 4L19 6" />
+        </symbol>
+        <symbol id="i-back" viewBox="0 0 24 24">
+          <path d="m14 5-7 7 7 7" />
+        </symbol>
+        <symbol id="i-history" viewBox="0 0 24 24">
+          <path d="M3 11a9 9 0 1 1 3 8M3 4v7h7M12 7v6l4 2" />
+        </symbol>
+      </defs>
+    </svg>
+    <header class="header">
+      <a class="brand" href="#cases" aria-label="DROPZONE, кейсы"
+        ><span class="brand-mark">D<span>›</span></span
+        ><span
+          >DROP<span class="brand-accent">ZONE</span
+          ><small>COUNTER-STRIKE CASES</small></span
+        ></a
+      >
+      <nav class="main-nav" aria-label="Основная навигация">
+        <button class="nav-button active" data-view="cases">
+          <svg><use href="#i-case" /></svg>Кейсы</button
+        ><button class="nav-button" data-view="inventory">
+          <svg><use href="#i-grid" /></svg>Инвентарь
+          <span id="inventory-count">0</span>
+        </button>
+      </nav>
+      <div class="header-actions">
+        <button
+          id="sound-toggle"
+          class="icon-button"
+          aria-label="Отключить звук"
+          aria-pressed="true"
+        >
+          <svg><use href="#i-sound" /></svg></button
+        ><button id="balance-button" class="balance-button">
+          <svg><use href="#i-wallet" /></svg
+          ><span
+            ><small>МОЙ БАЛАНС</small
+            ><strong id="balance"><em>$</em> 10,000.00</strong></span
+          ><b>+</b>
+        </button>
+      </div>
+    </header>
+    <main class="main">
+      <section id="cases-view">
+        <div class="intro">
+          <div>
+            <div class="eyebrow">
+              <span class="orange-line"></span> ТВОЙ СЛЕДУЮЩИЙ ДРОП
+            </div>
+            <h1>Открывай. <span>Забирай.</span> Повторяй.</h1>
+            <p>Любимые скины. Десять кейсов. Никаких ограничений.</p>
+          </div>
+          <div class="intro-note">
+            <svg><use href="#i-flash" /></svg>
+            <div>
+              <strong>Твой баланс — твои правила</strong
+              ><span>Пополняй бесплатно и пробуй снова</span>
+            </div>
+            <button class="text-button" data-topup>Пополнить</button>
+          </div>
+        </div>
+        <div class="section-title">
+          <h2>
+            <svg><use href="#i-case" /></svg>Коллекция кейсов <span>10</span>
+          </h2>
+          <span class="section-note">Какой откроем первым?</span>
+        </div>
+        <div id="case-grid" class="case-grid"></div>
+        <section class="recent-section">
+          <div class="section-title">
+            <h2>
+              <svg><use href="#i-history" /></svg>Твои последние дропы
+            </h2>
+            <button class="text-button" data-view="inventory">
+              В инвентарь
+            </button>
+          </div>
+          <div id="recent-drops" class="recent-drops"></div>
+        </section>
+      </section>
+      <section id="inventory-view" hidden>
+        <div class="section-title inventory-heading">
+          <div>
+            <div class="eyebrow">ТВОЯ КОЛЛЕКЦИЯ</div>
+            <h1>Инвентарь <span id="inventory-title-count">0</span></h1>
+          </div>
+          <button id="sell-all" class="secondary-button">Продать всё</button>
+        </div>
+        <div id="inventory-grid" class="inventory-grid"></div>
+        <button id="load-more" class="secondary-button" hidden>
+          Показать ещё
+        </button>
+      </section>
+    </main>
+    <footer class="footer">
+      <span class="footer-brand">DROP<span>ZONE</span></span>
+      <p>Баланс и предметы виртуальные. Без платежей и вывода денег.</p>
+      <span>Не связан с Valve.</span>
+    </footer>
+    <dialog
+      id="wallet-dialog"
+      class="wallet-dialog"
+      aria-label="Изменить баланс"
+    >
+      <form id="wallet-form" novalidate>
+        <button
+          type="button"
+          class="icon-button dialog-close"
+          data-close="wallet-dialog"
+          aria-label="Закрыть"
+        >
+          <svg><use href="#i-x" /></svg>
+        </button>
+        <div class="eyebrow">БЕЗ ЛИМИТОВ НА ПОПОЛНЕНИЯ</div>
+        <h2>Задай свой баланс</h2>
+        <p>Это виртуальные доллары. Просто выбери сумму.</p>
+        <label for="wallet-amount">Новый баланс, USD</label
+        ><input
+          id="wallet-amount"
+          name="amount"
+          inputmode="decimal"
+          autocomplete="off"
+          maxlength="18"
+          required
+        />
+        <div class="preset-row">
+          <button type="button" data-amount="1000">1 000</button
+          ><button type="button" data-amount="10000">10 000</button
+          ><button type="button" data-amount="100000">100 000</button
+          ><button type="button" data-amount="1000000">1 млн</button>
+        </div>
+        <p id="wallet-error" class="form-error" role="alert"></p>
+        <button class="primary-button" type="submit">Установить баланс</button>
+      </form>
+    </dialog>
+    <dialog id="case-dialog" class="case-dialog" aria-label="Открытие кейса">
+      <div id="case-content"></div>
+    </dialog>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </body>
 </html>
