@@ -1,0 +1,22 @@
+import {readFile,writeFile,rm,mkdir,readdir,cp} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import {resolve} from 'node:path';
+const root=resolve('.');
+const files=await readdir('src');
+const source=await Promise.all(files.map(file=>readFile('src/'+file)));
+const hash=createHash('sha256');
+for(const file of source)hash.update(file);
+async function hashAssets(directory){for(const item of await readdir(directory,{withFileTypes:true})){const path=directory+'/'+item.name;if(item.isDirectory())await hashAssets(path);else hash.update(await readFile(path));}}
+await hashAssets('public/assets');
+const version=hash.digest('hex').slice(0,12);
+const appPath='/app-'+version;
+const assetPath='/assets-'+version;
+await rm('dist',{recursive:true,force:true});
+await mkdir('dist'+appPath,{recursive:true});
+await cp('public/assets','dist'+assetPath,{recursive:true});
+for(let i=0;i<files.length;i++)await writeFile('dist'+appPath+'/'+files[i],source[i].toString().replaceAll('/assets/',assetPath+'/'));
+const html=(await readFile('index.html','utf8')).replaceAll('/src/',appPath+'/');
+await writeFile('dist/index.html',html);
+await writeFile('dist/_headers',`/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  Permissions-Policy: camera=(), microphone=(), geolocation=()\n  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'\n/\n  Cache-Control: public, max-age=0, must-revalidate\n/app-${version}/*\n  Cache-Control: public, max-age=31536000, immutable\n/assets-${version}/*\n  Cache-Control: public, max-age=31536000, immutable\n`);
+await writeFile('dist/404.html',html);
+console.log(JSON.stringify({directory:root+'/dist',version,modules:files.length}));

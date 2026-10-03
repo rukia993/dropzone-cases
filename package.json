@@ -1,0 +1,14 @@
+{
+  "name": "dropzone-cases",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Симулятор открытия кейсов Counter-Strike",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "build": "node scripts/build.mjs",
+    "test": "node --test",
+    "bench": "node scripts/bench.mjs"
+  },
+  "engines": { "node": ">=22" }
+}
