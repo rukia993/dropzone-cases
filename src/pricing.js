@@ -1,4 +1,5 @@
 export const TARGET_RETURN_PERCENT = 65;
+export const MAX_BREAK_EVEN_PERCENT = 15;
 export function priceCase(drops, skinById, weights) {
   if (
     !drops.length ||
@@ -32,7 +33,17 @@ export function priceCase(drops, skinById, weights) {
     0n,
   );
   const divisor = BigInt(TARGET_RETURN_PERCENT * 1000);
-  const units = (weightedTotal + divisor - 1n) / divisor;
+  let units = (weightedTotal + divisor - 1n) / divisor;
+  let cumulative = 0;
+  for (const drop of result) {
+    cumulative += drop.weight;
+    if (cumulative >= (100 - MAX_BREAK_EVEN_PERCENT) * 100) {
+      const minimumUnits =
+        (BigInt(skinById.get(drop.skinId).value) + 10n) / 10n;
+      if (minimumUnits > units) units = minimumUnits;
+      break;
+    }
+  }
   const price = Number(units * 10n);
   if (!Number.isSafeInteger(price) || price <= 0)
     throw new Error("Некорректная стоимость кейса.");

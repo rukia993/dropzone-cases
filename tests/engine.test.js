@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { statSync } from "node:fs";
 import { cases, skins, skinById, caseById } from "../src/catalog.js";
 import { priceCase } from "../src/pricing.js";
 import {
@@ -42,6 +43,46 @@ test("Расчёт цены отклоняет некорректные веро
   }
   assert.throws(() => priceCase([drops[0], drops[0]], prices, [9000, 1000]));
   assert.throws(() => priceCase([], prices, []));
+});
+
+test("Цена ограничивает окуп даже при резком скачке стоимости в содержимом", () => {
+  const weights = [
+    2409, 1820, 1383, 1051, 799, 607, 462, 351, 267, 203, 154, 117, 89, 68, 52,
+    40, 30, 23, 18, 14, 10, 8, 6, 5, 4, 3, 2, 2, 2, 1,
+  ];
+  const drops = weights.map((_, index) => ({ skinId: String(index) }));
+  const prices = new Map(
+    drops.map((drop, index) => [
+      drop.skinId,
+      { value: index < 6 ? 100 + index : 10000 + (index - 6) * 1000 },
+    ]),
+  );
+  const result = priceCase(drops, prices, weights);
+  assert.equal(result.price, 10010);
+  assert(
+    result.drops.reduce(
+      (sum, drop) =>
+        sum + (prices.get(drop.skinId).value >= result.price ? drop.weight : 0),
+      0,
+    ) <= 1500,
+  );
+});
+
+test("В каждом из десяти кейсов 30 уникальных предметов с собственными изображениями", () => {
+  assert.equal(cases.length, 10);
+  assert.equal(skins.length, 108);
+  for (const item of cases) {
+    assert.equal(item.drops.length, 30);
+    assert.equal(new Set(item.drops.map((drop) => drop.skinId)).size, 30);
+    assert.equal(
+      item.drops.reduce((sum, drop) => sum + drop.weight, 0),
+      10000,
+    );
+  }
+  for (const skin of skins)
+    assert(
+      statSync(new URL("../public" + skin.image, import.meta.url)).isFile(),
+    );
 });
 
 function item(id) {
