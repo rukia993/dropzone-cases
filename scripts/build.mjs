@@ -32,7 +32,7 @@ const html = (await readFile("index.html", "utf8")).replaceAll(
 await writeFile("dist/index.html", html);
 await writeFile(
   "dist/_headers",
-  `/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  Permissions-Policy: camera=(), microphone=(), geolocation=()\n  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'\n/\n  Cache-Control: public, max-age=0, must-revalidate\n/app-${version}/*\n  Cache-Control: public, max-age=31536000, immutable\n/assets-${version}/*\n  Cache-Control: public, max-age=31536000, immutable\n`,
+  `/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: no-referrer\n  Permissions-Policy: camera=(), microphone=(), geolocation=()\n  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'\n/\n  Cache-Control: public, max-age=0, must-revalidate\n/app-${version}/*\n  Cache-Control: public, max-age=31536000, immutable\n/assets-${version}/*\n  Cache-Control: public, max-age=31536000, immutable\n`,
 );
 await writeFile("dist/404.html", html);
 console.log(
